@@ -37,10 +37,7 @@ import javax.swing.UIManager.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.awt.EventQueue;
 
 class Position {
@@ -141,6 +138,8 @@ class Player {
     public void setID(int id){
         this.id = id;
     }
+
+    public void dispose() {}
 }
 
 
@@ -178,11 +177,12 @@ class ExAI extends Player {
     transient BufferedWriter writer;
     transient BufferedReader reader;
     transient BufferedReader errorReader;
+    transient Process proc;
 
     ExAI(String command){
         super("未接続");
         try {
-            Process proc = Runtime.getRuntime().exec(command);
+            proc = Runtime.getRuntime().exec(command);
             writer = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream(),"UTF-8"));
             reader = new BufferedReader(new InputStreamReader(proc.getInputStream(),"UTF-8"));
             errorReader = new BufferedReader(new InputStreamReader(proc.getErrorStream(),"UTF-8"));
@@ -233,6 +233,25 @@ class ExAI extends Player {
             writer.write(id+"\n");
             writer.flush();
         } catch(Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public void dispose(){
+        try {
+            if (writer != null) {
+                System.out.println(this.name + "との接続を切断しています。");
+                writer.close();
+                writer = null;
+            }
+            if (proc != null) {
+                System.out.println(this.name + "の終了を待っています。");
+                proc.waitFor();
+                System.out.println(this.name + "が終了しました。");
+                proc = null;
+            }
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
@@ -393,10 +412,17 @@ public class BombmanServer {
     Timer timer;
     TimerTask task;
 
+    void disposePlayers(){
+        players.forEach(p -> p.dispose());
+    }
+
     void newGame() {
         turn = 0;
         you = new You("あなた");
         bombs = new ArrayList<Bomb>();
+        if (players != null) {
+            disposePlayers();
+        }
         players = new ArrayList<Player>();
         items = new ArrayList<Item>();
         blocks = new ArrayList<Block>();
@@ -478,6 +504,13 @@ public class BombmanServer {
         JFrame frame = new JFrame("ボムマン "+VERSION);
         frame.setBounds(100, 100, 500, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent winEvt) {
+                    task.cancel();
+                    disposePlayers();
+                }
+            });
+
         field = new JTextPane();
         infoArea = new JTextArea();
         infoArea.setColumns(10);
