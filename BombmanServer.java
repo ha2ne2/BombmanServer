@@ -744,9 +744,9 @@ public class BombmanServer {
                 if (i < FALLING_WALL.length) {
                     Position p = new Position(FALLING_WALL[i][0], FALLING_WALL[i][1]);
                     walls.add(p);
-                    blocks.removeIf(b -> b.pos == p);
-                    items.removeIf(item -> item.pos == p);
-                    bombs.removeIf(b -> b.pos == p);
+                    blocks.removeIf(b -> b.pos.equals(p));
+                    items.removeIf(item -> item.pos.equals(p));
+                    bombs.removeIf(b -> b.pos.equals(p));
                 }
             }
 
