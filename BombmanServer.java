@@ -330,7 +330,7 @@ class MapData {
 
 
 public class BombmanServer {
-    public static final String VERSION = "0.4.3";
+    public static final String VERSION = "0.4.5";
     public static final int INIT_FIRE_POWER = 2;
     public static final int INIT_BOMB_LIMIT = 2;
     public static final int[][] FALLING_WALL =
