@@ -330,7 +330,7 @@ class MapData {
 
 
 public class BombmanServer {
-    public static final String VERSION = "0.4.5";
+    public static final String VERSION = "0.4.6";
     public static final int INIT_FIRE_POWER = 2;
     public static final int INIT_BOMB_LIMIT = 2;
     public static final int[][] FALLING_WALL =
@@ -766,8 +766,9 @@ public class BombmanServer {
                 players.parallelStream()
                 .map(p->p.action(jsonMapData))
                 .collect(Collectors.toList());
-            actions.forEach(action -> evalAction(action));
-
+            actions.forEach(action -> evalPutBombAction(action));
+            actions.forEach(action -> evalMoveAction(action));
+            
             turn += 1;
             showTurn = turn;
 
@@ -972,14 +973,13 @@ public class BombmanServer {
         return "Turn " + map.turn + "\n" + result.toString();
     }
 
-    public void evalAction(ActionData action){
+    public void evalPutBombAction(ActionData action){
         try {
             System.out.println(action.toString());
             Player p = action.p;
             if (!action.message.equals("")) {
                 textArea.append(action.p.name + "Åu" + action.message + "Åv\n");
                 textArea.setCaretPosition(textArea.getText().length());
-                //scrollpane.getViewport().scrollRectToVisible(new Rectangle(0, Integer.MAX_VALUE - 1, 1, 1));
             }
 
             if (action.putBomb) {
@@ -999,6 +999,14 @@ public class BombmanServer {
                     bombs.add(bomb);
                 }
             }
+        } catch(Exception e){
+            System.out.println(action.p.name + ": Invalid Action");
+        }
+    }
+    
+    public void evalMoveAction(ActionData action){
+        try {
+            Player p = action.p;
 
             Position nextPos = null;
             if (action.dir.equals("UP")) {
