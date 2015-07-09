@@ -779,7 +779,14 @@ public class BombmanServer {
                     walls.add(p);
                     blocks.removeIf(b -> b.pos.equals(p));
                     items.removeIf(item -> item.pos.equals(p));
-                    bombs.removeIf(b -> b.pos.equals(p));
+                    bombs.removeIf(b -> {
+                            if (b.pos.equals(p)) {
+                                b.owner.setBombCount--;
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        });
                 }
             }
 
