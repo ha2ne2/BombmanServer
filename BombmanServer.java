@@ -358,21 +358,9 @@ public class BombmanServer {
 
     // ‚Ç‚¤‘‚¯‚Î‚¢‚¢H
     public static final char[][] MAP_ARRAY =
-    {DEFAULT_MAP[0].toCharArray(),
-     DEFAULT_MAP[1].toCharArray(),
-     DEFAULT_MAP[2].toCharArray(),
-     DEFAULT_MAP[3].toCharArray(),
-     DEFAULT_MAP[4].toCharArray(),
-     DEFAULT_MAP[5].toCharArray(),
-     DEFAULT_MAP[6].toCharArray(),
-     DEFAULT_MAP[7].toCharArray(),
-     DEFAULT_MAP[8].toCharArray(),
-     DEFAULT_MAP[9].toCharArray(),
-     DEFAULT_MAP[10].toCharArray(),
-     DEFAULT_MAP[11].toCharArray(),
-     DEFAULT_MAP[12].toCharArray(),
-     DEFAULT_MAP[13].toCharArray(),
-     DEFAULT_MAP[14].toCharArray()};
+        Arrays.stream(DEFAULT_MAP)
+        .map(f -> f.toCharArray())
+        .toArray(c -> new char[c][WIDTH]);
 
     // ‚à‚Á‚ÆãY—í‚É‘‚¯‚»‚¤‚¾‚ª‘‚«•û‚ª‚í‚©‚ç‚È‚¢
     public static final Position[] NEAR_INIT_POSITIONS = 
